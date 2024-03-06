@@ -1,0 +1,164 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  background-color: #F5EDCE;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+  font-family: verdana;
+  font-size: 50px;
+}
+
+.button {
+  border-radius: 8px;;
+  color: #ffffff;
+  padding: 70px 60px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.button:hover {
+    background: #ffa813;
+}
+
+.button1 {
+  position:fixed;
+  right: 30px;
+  top: 60px;
+  background-color: #4CAF50;} 
+.button2 {
+  position:fixed;
+  right: 30px;
+  top: 230px;
+  background-color: #008CBA;} 
+.button3 {
+  position:fixed;
+  left: 30px;
+  top: 60px;
+  background-color: #008CBA;} 
+.button4 {
+  position:fixed;
+  left: 30px;
+  top: 230px;
+  background-color: #008CBA;} 
+
+.slider-container {
+  position: fixed;
+  bottom: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 20px;
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 350px;
+  height: 50px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  writing-mode: bt-lr;
+  transform: rotate(-90deg);
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #04AA6D;
+  cursor: pointer;
+}
+
+.slider-value {
+  color: #000;
+  font-family: verdana;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 100px;
+}
+
+.slider-container > div {
+  flex-basis: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+</style>
+</head>
+<body>
+<h1>MOTOR CONTROL</h1>
+<button class="button button1" onclick="Stop()">STOP &#128400</button>
+<button class="button button2" onclick="upMag()">Magnetic &#129522<br><span id="magState">Polar & Strength:</span></button>
+<button class="button button3" onclick="upMag()">Age &#129522<br><span id="magState">Age:</span></button>
+<button class="button button4" onclick="upMag()">Name &#129522<br><span id="magState">Name:</span></button>
+<div class="slider-container">
+  <div>
+    <input type="range" min="-10" max="10" value="0" step="0.5" class="slider" id="leftRange">
+    <div class="slider-value" id="leftValue">0</div>
+  </div>
+  <div>
+    <input type="range" min="-10" max="10" value="0" step="0.5" class="slider" id="rightRange">
+    <div class="slider-value" id="rightValue">0</div>
+  </div>
+</div>
+<script>
+var leftSlider = document.getElementById("leftRange");
+var leftValueDisplay = document.getElementById("leftValue");
+var rightSlider = document.getElementById("rightRange");
+var rightValueDisplay = document.getElementById("rightValue");
+leftSlider.addEventListener("input", function() {
+  leftValueDisplay.textContent = this.value;
+});
+rightSlider.addEventListener("input", function() {
+  rightValueDisplay.textContent = this.value;
+});
+leftSlider.addEventListener("input", sendSpeedLeft);
+rightSlider.addEventListener("input", sendSpeedRight);
+var xhttp = new XMLHttpRequest();
+function sendSpeedLeft() {
+  xhttp.open("GET", "/speedL?left=" + this.value);
+  xhttp.send();
+}
+function sendSpeedRight() {
+  xhttp.open("GET", "/speedR?right=" + this.value);
+  xhttp.send();
+}
+function Stop() {
+  xhttp.open("GET", "/S");
+  xhttp.send();
+}
+function upMag() {
+  xhttp.onreadystatechange = function() {
+    if (this.readyState === 4 && this.status === 200) {
+      document.getElementById("magState").innerHTML = this.responseText;
+      console.log(this.responseText);
+    }
+  };
+  xhttp.open("GET", "/updateMagnetic");
+  xhttp.send();
+}
+
+</script>
+</body>
+</html>
